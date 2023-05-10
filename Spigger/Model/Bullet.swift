@@ -6,15 +6,23 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum BulletOwner {
     case Player
     case Enemy
 }
 
-struct Bullet: Identifiable, Equatable {
+enum BulletDirection {
+    case Up
+    case Down
+}
+
+struct Bullet: Identifiable {
     var id = UUID().uuidString
     var owner: BulletOwner
     var damage: Int
     var pos: CGPoint
+    var color: Color = .red
+    var size: CGSize = .init(width: 5, height: 25)
 }

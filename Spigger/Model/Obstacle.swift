@@ -14,8 +14,10 @@ enum ObstacleModifier {
     case Divide
 }
 
-struct Obstacle: Identifiable, Hashable, Equatable {
+struct Obstacle: Identifiable, Equatable {
     var id = UUID().uuidString
     var modifier: ObstacleModifier
     var amount: Int
+    var pos: CGPoint
+    var size: CGSize = .init(width: 100, height: 100)
 }
