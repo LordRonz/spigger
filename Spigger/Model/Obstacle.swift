@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum ObstacleModifier {
     case Add
@@ -19,5 +20,6 @@ struct Obstacle: Identifiable, Equatable {
     var modifier: ObstacleModifier
     var amount: Int
     var pos: CGPoint
-    var size: CGSize = .init(width: 100, height: 100)
+    var size: CGSize = .init(width: 50, height: 50)
+    var color: Color = .green
 }
