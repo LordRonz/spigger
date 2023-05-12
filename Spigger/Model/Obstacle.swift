@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-enum ObstacleModifier {
+enum ObstacleModifier: CaseIterable {
     case Add
     case Subtract
     case Multiply

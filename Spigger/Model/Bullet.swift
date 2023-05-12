@@ -8,12 +8,12 @@
 import Foundation
 import SwiftUI
 
-enum BulletOwner {
+enum BulletOwner: CaseIterable {
     case Player
     case Enemy
 }
 
-enum BulletDirection {
+enum BulletDirection: CaseIterable {
     case Up
     case Down
 }

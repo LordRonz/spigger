@@ -18,6 +18,7 @@
 		93098D532A04EB49004387D6 /* Obstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93098D522A04EB49004387D6 /* Obstacle.swift */; };
 		93098D552A04F60B004387D6 /* GameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93098D542A04F60B004387D6 /* GameView.swift */; };
 		93098D572A08E473004387D6 /* Bullet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93098D562A08E473004387D6 /* Bullet.swift */; };
+		93BCBDC42A0CFD0900D5F3B5 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BCBDC32A0CFD0900D5F3B5 /* Triangle.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		93098D522A04EB49004387D6 /* Obstacle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Obstacle.swift; sourceTree = "<group>"; };
 		93098D542A04F60B004387D6 /* GameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameView.swift; sourceTree = "<group>"; };
 		93098D562A08E473004387D6 /* Bullet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bullet.swift; sourceTree = "<group>"; };
+		93BCBDC32A0CFD0900D5F3B5 /* Triangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				93098D4B2A039E39004387D6 /* Button.swift */,
+				93BCBDC32A0CFD0900D5F3B5 /* Triangle.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -189,6 +192,7 @@
 				93098D3A2A039472004387D6 /* SpiggerApp.swift in Sources */,
 				93098D4F2A04E711004387D6 /* Player.swift in Sources */,
 				93098D552A04F60B004387D6 /* GameView.swift in Sources */,
+				93BCBDC42A0CFD0900D5F3B5 /* Triangle.swift in Sources */,
 				93098D4C2A039E39004387D6 /* Button.swift in Sources */,
 				93098D572A08E473004387D6 /* Bullet.swift in Sources */,
 			);

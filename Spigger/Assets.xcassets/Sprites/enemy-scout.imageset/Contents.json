@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "Kla'ed - Scout - Base.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "Kla'ed - Scout - Base 1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "Kla'ed - Scout - Base 2.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

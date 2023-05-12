@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "Main Ship - Base - Full health.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "Main Ship - Base - Full health 1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "Main Ship - Base - Full health 2.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
