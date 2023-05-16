@@ -7,7 +7,15 @@
 
 import SwiftUI
 
+struct AlertItem: Identifiable {
+    var id = UUID()
+    var title: Text
+    var message: String
+    var dismissButton: Alert.Button?
+}
+
 struct GameView: View {
+    @Environment(\.dismiss) var dismiss
     let gameUpdate = Timer.publish(
         every: 0.01, // Second
         tolerance: 0.01, // Gives tolerance so that SwiftUI makes optimization
@@ -22,10 +30,14 @@ struct GameView: View {
     @State private var enemies: [Enemy] = []
     @State private var bullets: [Bullet] = []
     @State private var obstacles: [Obstacle] = []
+    @State private var powerUps: [PowerUp] = []
     @State private var elapsedMs: Double = 0
+    @State private var score = 0
     @State private var player: Player = .init(pos: CGPoint(x: UIScreen.main.bounds.width * 0.5, y: UIScreen.main.bounds.height * 0.8))
     @GestureState private var fingerLocation: CGPoint? = nil
     @GestureState private var startLocation: CGPoint? = nil // 1
+    @State private var isGameOver = false
+    @State private var alertItem: AlertItem?
 
     var simpleDrag: some Gesture {
         DragGesture()
@@ -48,23 +60,51 @@ struct GameView: View {
 
     var body: some View {
         ZStack {
+            HStack {
+                Text("Score: \(score)").font(.title2)
+                    .padding(10).background(.ultraThinMaterial).cornerRadius(20).overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [3]))
+                    )
+            }
+            .frame(maxHeight: .infinity, alignment: .top)
             ForEach(enemies) { enemy in
                 Rectangle()
                     .frame(width: enemy.size.width, height: enemy.size.height)
                     .position(enemy.pos)
-                    .foregroundColor(enemy.color)
+                    .foregroundColor(enemy.color.opacity(0))
+                    .overlay(
+                        Image(enemy.type == .Default ? "enemy-scout" : "dreadnought")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: enemy.size.width + (enemy.type == .Default ? 125 : 50), height: enemy.size.height + (enemy.type == .Default ? 125 : 50))
+                            .position(enemy.pos)
+                    )
             }
             ForEach(obstacles) { obstacle in
                 Rectangle()
                     .frame(width: obstacle.size.width, height: obstacle.size.height)
                     .position(obstacle.pos)
                     .foregroundColor(obstacle.color)
+                    .overlay(
+                        Text("\(getSymbol(s: obstacle.modifier)) \(obstacle.amount)").position(obstacle.pos)
+                    )
+            }
+            ForEach(powerUps) { obstacle in
+                Rectangle()
+                    .frame(width: obstacle.size.width, height: obstacle.size.height)
+                    .position(obstacle.pos)
+                    .foregroundColor(obstacle.color)
+                    .overlay(
+                        Text("?").font(.title).position(obstacle.pos)
+                    )
             }
             ForEach(bullets) { bullet in
                 Rectangle()
                     .foregroundColor(bullet.color)
                     .frame(width: bullet.size.width, height: bullet.size.height)
                     .position(bullet.pos)
+                    .rotationEffect(.degrees(0))
             }
             Rectangle()
                 .foregroundColor(.red.opacity(0))
@@ -100,14 +140,38 @@ struct GameView: View {
             }
             .frame(maxHeight: .infinity, alignment: .bottom)
         }
+        .alert(
+            "Game Over",
+            isPresented: $isGameOver,
+            presenting: alertItem
+        ) { _ in
+            Button("Back to home") {
+                // Handle back to home.
+                dismiss()
+            }
+        } message: { details in
+            Text(details.message)
+        }
         .onReceive(gameUpdate) { _ in
+            if player.health <= 0 && !isGameOver {
+                isGameOver = true
+                alertItem = AlertItem(title: Text("Game Over"), message: "Your score: \(score)", dismissButton: Alert.Button.default(
+                    Text("Back to home"), action: { print("") }
+                ))
+                gameUpdate.upstream.connect().cancel()
+            }
             let widthBound = UIScreen.main.bounds.width
             let heightBound = UIScreen.main.bounds.height
             elapsedMs += 1
             let randomInt = Int.random(in: 1 ..< 250)
             if enemies.count < 4 {
                 if randomInt == 69 {
-                    enemies.append(Enemy(health: Int.random(in: 50 ..< 100), pos: CGPoint(x: Int.random(in: 50 ..< Int(widthBound)), y: 0), shootTimer: elapsedMs + 1))
+                    let randomIntBoss = Int.random(in: 1 ..< 20)
+                    if randomIntBoss != 10 {
+                        enemies.append(Enemy(health: Int.random(in: 50 ..< 100), pos: CGPoint(x: Int.random(in: 50 ..< Int(widthBound)), y: 0), shootTimer: elapsedMs + 1))
+                    } else {
+                        enemies.append(Enemy(health: 1000, kamikazeDamage: 40, pos: CGPoint(x: Int.random(in: 100 ..< Int(widthBound) - 50), y: 0), shootTimer: elapsedMs + 1, size: .init(width: 120, height: 120), type: .Dreadnought, speed: 0.5))
+                    }
                 }
             }
             if obstacles.count < 3 {
@@ -116,9 +180,21 @@ struct GameView: View {
                 }
             }
 
+            let randomIntPowerUp = Int.random(in: 1 ... 100)
+            if randomIntPowerUp == 69 && powerUps.count < 2 {
+                powerUps.append(PowerUp(type: .allCases.randomElement()!, pos: CGPoint(x: Int.random(in: 50 ..< Int(widthBound)), y: 0)))
+            }
+
             if elapsedMs == player.shootTimer {
                 bullets.append(Bullet(owner: .Player, damage: player.damage, pos: player.pos, color: .blue))
-                player.shootTimer += 100
+                player.shootTimer += player.powerUp == .Rapid ? 20 : 100
+                if player.powerUp == .Spread {
+                    bullets.append(Bullet(owner: .Player, damage: player.damage, pos: CGPoint(x: player.pos.x + 15, y: player.pos.y), color: .blue))
+                    bullets.append(Bullet(owner: .Player, damage: player.damage, pos: CGPoint(x: player.pos.x - 15, y: player.pos.y), color: .blue))
+                }
+            }
+            if elapsedMs == player.powerUpTimeout {
+                player.powerUp = .None
             }
 
             for (index, enemy) in enemies.enumerated() {
@@ -131,7 +207,7 @@ struct GameView: View {
             var idToBeRemoved: [String] = []
             for (index, _) in enemies.enumerated() { enemies[index].pos = CGPoint(
                 x: enemies[index].pos.x,
-                y: enemies[index].pos.y < heightBound ? enemies[index].pos.y + 1 : 0
+                y: enemies[index].pos.y < heightBound ? enemies[index].pos.y + enemies[index].speed : 0
             )
             if enemies[index].pos.y >= heightBound {
                 idToBeRemoved.append(enemies[index].id)
@@ -139,6 +215,7 @@ struct GameView: View {
                 idToBeRemoved.append(enemies[index].id)
                 player.health -= enemies[index].kamikazeDamage
             } else if enemies[index].health <= 0 {
+                score += enemies[index].type == .Default ? 10 : 100
                 idToBeRemoved.append(enemies[index].id)
             }
             }
@@ -208,6 +285,31 @@ struct GameView: View {
             for idToBeRemove in idToBeRemoved {
                 obstacles = obstacles.filter { $0.id != idToBeRemove }
             }
+
+            idToBeRemoved = []
+
+            for (index, powerUp) in powerUps.enumerated() {
+                powerUps[index].pos = CGPoint(
+                    x: powerUp.pos.x,
+                    y: powerUp.pos.y < heightBound ? powerUp.pos.y + 1.5 : 0
+                )
+                if checkCollision(locationA: player.pos, locationB: powerUp.pos, sizeA: player.size, sizeB: powerUp.size) {
+                    switch powerUp.type {
+                    case .Rapid:
+                        player.powerUp = .Rapid
+                    case .Spread:
+                        player.powerUp = .Spread
+                    }
+                    player.powerUpTimeout = elapsedMs + 1000
+                    idToBeRemoved.append(powerUp.id)
+                } else if powerUp.pos.y >= heightBound {
+                    idToBeRemoved.append(powerUp.id)
+                }
+            }
+
+            for idToBeRemove in idToBeRemoved {
+                powerUps = powerUps.filter { $0.id != idToBeRemove }
+            }
         }.onAppear {}
         .background(Color(UIColor.systemBackground))
         .gesture(
@@ -217,6 +319,19 @@ struct GameView: View {
 
     func checkCollision(locationA: CGPoint, locationB: CGPoint, sizeA: CGSize, sizeB: CGSize) -> Bool {
         return abs(locationA.x - locationB.x) < (sizeA.width + sizeB.width) / 2 && abs(locationA.y - locationB.y) < (sizeA.height + sizeB.height) / 2
+    }
+
+    func getSymbol(s: ObstacleModifier) -> String {
+        switch s {
+        case .Add:
+            return "+"
+        case .Subtract:
+            return "-"
+        case .Multiply:
+            return "×"
+        case .Divide:
+            return "÷"
+        }
     }
 
     func generateEnemies() -> [Enemy] {

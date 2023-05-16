@@ -8,6 +8,11 @@
 import Foundation
 import SwiftUI
 
+enum EnemyType: CaseIterable {
+    case Default
+    case Dreadnought
+}
+
 struct Enemy: Identifiable {
     var id = UUID().uuidString
     var health: Int = 20
@@ -16,5 +21,7 @@ struct Enemy: Identifiable {
     var pos: CGPoint
     var shootTimer: Double
     var color: Color = .blue
-    var size: CGSize = .init(width: 100, height: 100)
+    var size: CGSize = .init(width: 80, height: 80)
+    var type: EnemyType = .Default
+    var speed: Double = 1
 }

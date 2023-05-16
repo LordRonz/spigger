@@ -15,6 +15,11 @@ enum ObstacleModifier: CaseIterable {
     case Divide
 }
 
+enum PowerUpType: CaseIterable {
+    case Rapid
+    case Spread
+}
+
 struct Obstacle: Identifiable, Equatable {
     var id = UUID().uuidString
     var modifier: ObstacleModifier
@@ -22,4 +27,12 @@ struct Obstacle: Identifiable, Equatable {
     var pos: CGPoint
     var size: CGSize = .init(width: 50, height: 50)
     var color: Color = .green
+}
+
+struct PowerUp: Identifiable, Equatable {
+    var id = UUID().uuidString
+    var type: PowerUpType
+    var pos: CGPoint
+    var size: CGSize = .init(width: 50, height: 50)
+    var color: Color = .purple
 }

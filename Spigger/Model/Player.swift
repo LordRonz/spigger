@@ -7,6 +7,12 @@
 
 import Foundation
 
+enum PlayerPowerUp: CaseIterable {
+    case Rapid
+    case Spread
+    case None
+}
+
 struct Player: Identifiable, Equatable {
     var id = UUID().uuidString
     var health: Int = 100
@@ -14,4 +20,6 @@ struct Player: Identifiable, Equatable {
     var pos: CGPoint
     var shootTimer: Double = 100
     var size: CGSize = .init(width: 80, height: 80)
+    var powerUp = PlayerPowerUp.None
+    var powerUpTimeout: Double = 0
 }

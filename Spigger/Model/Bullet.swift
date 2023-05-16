@@ -18,6 +18,12 @@ enum BulletDirection: CaseIterable {
     case Down
 }
 
+enum BulletLeanDir: CaseIterable {
+    case None
+    case Left
+    case Right
+}
+
 struct Bullet: Identifiable {
     var id = UUID().uuidString
     var owner: BulletOwner
@@ -25,4 +31,6 @@ struct Bullet: Identifiable {
     var pos: CGPoint
     var color: Color = .red
     var size: CGSize = .init(width: 5, height: 25)
+    var rotation = BulletLeanDir.None
+    var xMov: Int = 0
 }
