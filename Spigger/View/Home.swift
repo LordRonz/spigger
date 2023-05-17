@@ -18,7 +18,7 @@ struct Home: View {
         NavigationStack {
             VStack {
                 VStack {
-                    Image("Logo")
+                    Image("Logo").resizable().frame(width: 250, height: 284)
                     if highScore != nil {
                         Text("High Score: \(highScore ?? 0)").font(.title).bold()
                     }
@@ -27,11 +27,11 @@ struct Home: View {
                     } label: {
                         Label("Play", systemImage: "play.circle")
                     }.buttonStyle(MainButton(width: 200)).font(.title).padding()
-                    Button {
-                        isShowingHowToView = true
-                    } label: {
-                        Label("How to play", systemImage: "questionmark.circle")
-                    }.buttonStyle(MainButton(width: 200)).font(.title).padding()
+//                    Button {
+//                        isShowingHowToView = true
+//                    } label: {
+//                        Label("How to play", systemImage: "questionmark.circle")
+//                    }.buttonStyle(MainButton(width: 200)).font(.title).padding()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity) // 1

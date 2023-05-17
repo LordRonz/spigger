@@ -16,6 +16,7 @@ struct AlertItem: Identifiable {
 
 struct GameView: View {
     @Environment(\.dismiss) var dismiss
+    @AppStorage("highscore") var highScore: Int?
     let gameUpdate = Timer.publish(
         every: 0.01, // Second
         tolerance: 0.01, // Gives tolerance so that SwiftUI makes optimization
@@ -154,10 +155,15 @@ struct GameView: View {
         }
         .onReceive(gameUpdate) { _ in
             if player.health <= 0 && !isGameOver {
-                isGameOver = true
+                if highScore != nil {
+                    highScore = highScore! < score ? score : highScore
+                } else {
+                    highScore = score
+                }
                 alertItem = AlertItem(title: Text("Game Over"), message: "Your score: \(score)", dismissButton: Alert.Button.default(
                     Text("Back to home"), action: { print("") }
                 ))
+                isGameOver = true
                 gameUpdate.upstream.connect().cancel()
             }
             let widthBound = UIScreen.main.bounds.width
@@ -180,7 +186,7 @@ struct GameView: View {
                 }
             }
 
-            let randomIntPowerUp = Int.random(in: 1 ... 100)
+            let randomIntPowerUp = Int.random(in: 1 ... 1000)
             if randomIntPowerUp == 69 && powerUps.count < 2 {
                 powerUps.append(PowerUp(type: .allCases.randomElement()!, pos: CGPoint(x: Int.random(in: 50 ..< Int(widthBound)), y: 0)))
             }
